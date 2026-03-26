@@ -16,12 +16,13 @@ import orders
 
 class CheckoutResult:
     def __init__(
-        self, success: bool, message: str, order_ids: list = None, failures: list = None
+        self, success: bool, message: str,
+          order_ids: list = None, failures: list = None
     ):
         self.success = success
         self.message = message
         self.order_ids = order_ids or []
-        self.failures = failures or []  # items that could not be ordered
+        self.failures = failures or []
 
     def __repr__(self):
         return (
@@ -42,9 +43,12 @@ def checkout(customer_email: str) -> CheckoutResult:
       - If unsuccessful (out of stock, etc.): item is recorded as a failure
 
     After processing all items:
-      - If every item succeeded: cart is cleared, result is success
-      - If some items failed: cart keeps only the failed items, result is partial failure
-      - If the cart was empty: return an error immediately
+      - If every item succeeded: 
+      cart is cleared, result is success
+      - If some items failed: 
+      cart keeps only the failed items, result is partial failure
+      - If the cart was empty: 
+      return an error immediately
 
     Notifications are sent per item by orders.place_order() automatically.
     """
@@ -77,13 +81,15 @@ def checkout(customer_email: str) -> CheckoutResult:
         # Rebuild cart with only the failed items
         cart.clear_cart(customer_email)
         for f in failures:
-            cart.add_to_cart(customer_email, f["item_id"], f["quantity"])
+            cart.add_to_cart(
+                customer_email, f["item_id"], f["quantity"])
         return CheckoutResult(
             False,
-            f"Partial checkout: {len(order_ids)} succeeded, {len(failures)} failed",
+            f"Partial: {len(order_ids)} succeeded, {len(failures)} failed",
             order_ids=order_ids,
             failures=failures,
         )
 
     cart.clear_cart(customer_email)
-    return CheckoutResult(True, "Checkout complete", order_ids=order_ids)
+    return CheckoutResult(
+        True, "Checkout complete", order_ids=order_ids)

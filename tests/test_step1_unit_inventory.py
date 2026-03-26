@@ -9,7 +9,7 @@
 import inventory
 
 
-# ── Shared setup ──────────────────────────────────────────────────────────────
+# ── Shared setup ───
 # Before each test, reset stock to known defaults so tests don't
 # affect each other.  pytest calls setup_function() automatically.
 
@@ -18,7 +18,7 @@ def setup_function():
     inventory.reset_stock()
 
 
-# ── get_stock() ───────────────────────────────────────────────────────────────
+# ── get_stock() ───
 
 
 class TestGetStock:
@@ -42,7 +42,7 @@ class TestGetStock:
         assert result == 25
 
 
-# ── reduce_stock() ────────────────────────────────────────────────────────────
+# ── reduce_stock() ───
 
 
 class TestReduceStock:
@@ -82,11 +82,11 @@ class TestReduceStock:
         assert result is False
 
     def test_zero_quantity_raises_value_error(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError): # noqa: F821
             inventory.reduce_stock("laptop", 0)
 
     def test_negative_quantity_raises_value_error(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError): # noqa: F821
             inventory.reduce_stock("laptop", -5)
 
     def test_multiple_reductions_accumulate_correctly(self):

@@ -12,13 +12,15 @@ class OrderResult:
         self.order_id = order_id
 
     def __repr__(self):
-        return f"OrderResult(success={self.success}, message='{self.message}', order_id='{self.order_id}')"
+        return f"Result({self.success},'{self.message}','{self.order_id}')"
+
 
 
 _order_counter = [1000]
 
 
-def place_order(customer_email: str, item_id: str, quantity: int) -> OrderResult:
+def place_order(
+        customer_email: str, item_id: str, quantity: int) -> OrderResult:
     """
     Place an order for a given item and quantity.
 
@@ -38,7 +40,7 @@ def place_order(customer_email: str, item_id: str, quantity: int) -> OrderResult
     available = inventory.get_stock(item_id)
     if available < quantity:
         return OrderResult(
-            False, f"Insufficient stock: requested {quantity}, available {available}"
+            False, f"Insufficient stock:{quantity}, available {available}"
         )
 
     ok = inventory.reduce_stock(item_id, quantity)
@@ -48,6 +50,8 @@ def place_order(customer_email: str, item_id: str, quantity: int) -> OrderResult
     _order_counter[0] += 1
     order_id = f"ORD-{_order_counter[0]}"
 
-    notifications.send_confirmation(customer_email, order_id, item_id, quantity)
+    notifications.send_confirmation(
+        customer_email, order_id, item_id, quantity)
 
-    return OrderResult(True, "Order placed successfully", order_id)
+    return OrderResult(
+        True, "Order placed successfully", order_id)
