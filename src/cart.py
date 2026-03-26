@@ -5,7 +5,7 @@
 # This module knows NOTHING about stock or payments — it is what the user sees and interacts with.
 # responsible for building a list of intended purchases.
 
-_carts = {}   # { customer_email: { item_id: quantity } }
+_carts = {}  # { customer_email: { item_id: quantity } }
 
 
 def add_to_cart(customer_email: str, item_id: str, quantity: int) -> bool:

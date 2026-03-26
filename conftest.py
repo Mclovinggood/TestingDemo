@@ -2,17 +2,16 @@
 # Adds the src/ folder to Python's path so every test file can
 # do  "import inventory"  without any extra setup.
 
+import orders
+import notifications
+import inventory
+import cart
 import os
 import sys
 
 import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
-
-import cart
-import inventory
-import notifications
-import orders
 
 
 @pytest.fixture(autouse=True)

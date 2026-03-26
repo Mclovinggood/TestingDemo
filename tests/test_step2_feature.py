@@ -1,4 +1,3 @@
-
 #  STEP 2 — Feature / Functional Tests: the Checkout feature
 #
 #  We are testing the COMPLETE "Place Order" feature end-to-end:
@@ -18,7 +17,6 @@
 #    - Tests represent realistic user scenarios (happy path, sad paths).
 #    - We are not deliberately breaking internal interfaces here.
 
-import pytest
 import cart
 import inventory
 import notifications
@@ -27,6 +25,7 @@ import checkout
 
 # ── Shared setup ──────────────────────────────────────────────────────────────
 # Reset ALL state before every test; feature tests touch the whole system.
+
 
 def setup_function():
     inventory.reset_stock()
@@ -38,8 +37,8 @@ def setup_function():
 #  "A customer with items in their cart can complete a checkout.
 #   On success, their order is confirmed and their cart is cleared."
 
-class TestCheckoutHappyPath:
 
+class TestCheckoutHappyPath:
     def test_checkout_single_item_succeeds(self):
         """
         PRECONDITION : Customer has 1 item in cart, item is in stock.
@@ -91,8 +90,8 @@ class TestCheckoutHappyPath:
 
         checkout.checkout("carol@example.com")
 
-        assert inventory.get_stock("laptop") == 8    # 10 - 2
-        assert inventory.get_stock("mouse") == 40    # 50 - 10
+        assert inventory.get_stock("laptop") == 8  # 10 - 2
+        assert inventory.get_stock("mouse") == 40  # 50 - 10
 
     def test_checkout_sends_confirmation_per_item(self):
         """
@@ -116,8 +115,8 @@ class TestCheckoutHappyPath:
 #  "A customer cannot check out with an empty cart."
 # ══════════════════════════════════════════════════════════════════════════════
 
-class TestCheckoutEmptyCart:
 
+class TestCheckoutEmptyCart:
     def test_checkout_with_empty_cart_fails(self):
         """
         PRECONDITION : Customer has no items in their cart.
@@ -140,8 +139,8 @@ class TestCheckoutEmptyCart:
 #  "If an item in the cart is out of stock at checkout time,
 #   that item fails but other items in the cart still process."
 
-class TestCheckoutPartialFailure:
 
+class TestCheckoutPartialFailure:
     def test_out_of_stock_item_causes_partial_failure(self):
         """
         PRECONDITION : Cart has laptop×1 (in stock) and hoverboard×1 (not stocked).
@@ -150,13 +149,13 @@ class TestCheckoutPartialFailure:
                        Laptop order succeeds, hoverboard order fails.
         """
         cart.add_to_cart("frank@example.com", "laptop", 1)
-        cart.add_to_cart("frank@example.com", "hoverboard", 1)   # not in stock
+        cart.add_to_cart("frank@example.com", "hoverboard", 1)  # not in stock
 
         result = checkout.checkout("frank@example.com")
 
         assert result.success is False
-        assert len(result.order_ids) == 1      # laptop went through
-        assert len(result.failures) == 1       # hoverboard failed
+        assert len(result.order_ids) == 1  # laptop went through
+        assert len(result.failures) == 1  # hoverboard failed
         assert result.failures[0]["item_id"] == "hoverboard"
 
     def test_failed_item_stays_in_cart_after_partial_checkout(self):
@@ -172,8 +171,8 @@ class TestCheckoutPartialFailure:
         checkout.checkout("frank@example.com")
 
         remaining = cart.get_cart("frank@example.com")
-        assert "hoverboard" in remaining       # still in cart
-        assert "mouse" not in remaining        # successfully ordered, removed
+        assert "hoverboard" in remaining  # still in cart
+        assert "mouse" not in remaining  # successfully ordered, removed
 
     def test_successful_items_stock_is_reduced_despite_partial_failure(self):
         cart.add_to_cart("grace@example.com", "keyboard", 5)
@@ -181,7 +180,7 @@ class TestCheckoutPartialFailure:
 
         checkout.checkout("grace@example.com")
 
-        assert inventory.get_stock("keyboard") == 20   # 25 - 5, deducted
+        assert inventory.get_stock("keyboard") == 20  # 25 - 5, deducted
 
     def test_requesting_more_than_stock_causes_failure(self):
         """
@@ -201,8 +200,8 @@ class TestCheckoutPartialFailure:
 #  REQUIREMENT 4
 #  "Invalid customer inputs are rejected before any processing begins."
 
-class TestCheckoutInputValidation:
 
+class TestCheckoutInputValidation:
     def test_invalid_email_is_rejected(self):
         """
         PRECONDITION : Customer email is malformed (no @ sign).
@@ -216,7 +215,7 @@ class TestCheckoutInputValidation:
         result = checkout.checkout("notanemail")
 
         assert result.success is False
-        assert inventory.get_stock("laptop") == 10   # unchanged
+        assert inventory.get_stock("laptop") == 10  # unchanged
         assert len(notifications.get_sent()) == 0
 
     def test_two_different_customers_carts_are_independent(self):
@@ -231,4 +230,4 @@ class TestCheckoutInputValidation:
         checkout.checkout("alice@example.com")
 
         bob_cart = cart.get_cart("bob@example.com")
-        assert bob_cart == {"mouse": 5}   # Bob's cart untouched
+        assert bob_cart == {"mouse": 5}  # Bob's cart untouched

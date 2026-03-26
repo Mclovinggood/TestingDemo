@@ -1,4 +1,3 @@
-
 #  STEP 3 — Integration Tests: orders + inventory + notifications
 #  NO mocking.  All three real modules are wired together.
 #  We are testing that they collaborate correctly.
@@ -9,7 +8,6 @@
 #   Integration tests use the REAL modules — so a bug in inventory
 #   will now surface here even if orders.py itself is fine.
 
-import pytest
 import inventory
 import notifications
 import orders
@@ -18,6 +16,7 @@ import orders
 # ── Shared setup/teardown ─────────────────────────────────────────────────────
 # Reset BOTH modules before every test so they don't bleed into each other.
 
+
 def setup_function():
     inventory.reset_stock()
     notifications.clear()
@@ -25,24 +24,24 @@ def setup_function():
 
 # ── orders ↔ inventory ────────────────────────────────────────────────────────
 
-class TestOrdersInventoryIntegration:
 
+class TestOrdersInventoryIntegration:
     def test_successful_order_reduces_stock_by_correct_amount(self):
         """
         After a successful order, inventory must reflect the deduction.
         This test catches bugs in the orders→inventory interface.
         """
-        before = inventory.get_stock("mouse")        # 50
+        before = inventory.get_stock("mouse")  # 50
         orders.place_order("alice@example.com", "mouse", 3)
         after = inventory.get_stock("mouse")
-        assert after == before - 3                   # must be 47
+        assert after == before - 3  # must be 47
 
     def test_order_for_unavailable_item_leaves_stock_unchanged(self):
         orders.place_order("alice@example.com", "laptop", 999)
-        assert inventory.get_stock("laptop") == 10   # unchanged
+        assert inventory.get_stock("laptop") == 10  # unchanged
 
     def test_two_sequential_orders_accumulate_correctly(self):
-        orders.place_order("a@a.com", "keyboard", 5)   # 25 → 20
+        orders.place_order("a@a.com", "keyboard", 5)  # 25 → 20
         orders.place_order("b@b.com", "keyboard", 10)  # 20 → 10
         assert inventory.get_stock("keyboard") == 10
 
@@ -52,7 +51,7 @@ class TestOrdersInventoryIntegration:
         This is the test that catches the BUG we introduce in the demo.
         See STEP 3 instructions for details.
         """
-        available = inventory.get_stock("laptop")   # 10
+        available = inventory.get_stock("laptop")  # 10
         result = orders.place_order("dana@example.com", "laptop", available)
         assert result.success is True, (
             f"Order should succeed when requesting exactly available stock.\n"
@@ -64,8 +63,8 @@ class TestOrdersInventoryIntegration:
 
 # ── orders ↔ notifications ────────────────────────────────────────────────────
 
-class TestOrdersNotificationsIntegration:
 
+class TestOrdersNotificationsIntegration:
     def test_successful_order_sends_exactly_one_notification(self):
         orders.place_order("bob@example.com", "keyboard", 2)
         sent = notifications.get_sent()
@@ -101,8 +100,8 @@ class TestOrdersNotificationsIntegration:
 
 # ── Full end-to-end flow ──────────────────────────────────────────────────────
 
-class TestFullOrderFlow:
 
+class TestFullOrderFlow:
     def test_complete_happy_path(self):
         """
         Place a valid order and verify every side-effect:
@@ -117,7 +116,7 @@ class TestFullOrderFlow:
         assert result.order_id is not None
 
         # Inventory side-effect
-        assert inventory.get_stock("laptop") == 7   # 10 - 3
+        assert inventory.get_stock("laptop") == 7  # 10 - 3
 
         # Notification side-effect
         sent = notifications.get_sent()

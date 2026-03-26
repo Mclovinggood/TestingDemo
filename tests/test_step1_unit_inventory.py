@@ -1,4 +1,3 @@
-
 #  STEP 1 — Unit Tests: inventory module
 #  Test each function IN ISOLATION. No orders, no notifications.
 
@@ -7,7 +6,6 @@
 #   ACT      – call the function under test
 #   ASSERT   – check the result
 
-import pytest
 import inventory
 
 
@@ -15,14 +13,15 @@ import inventory
 # Before each test, reset stock to known defaults so tests don't
 # affect each other.  pytest calls setup_function() automatically.
 
+
 def setup_function():
     inventory.reset_stock()
 
 
 # ── get_stock() ───────────────────────────────────────────────────────────────
 
-class TestGetStock:
 
+class TestGetStock:
     def test_returns_correct_count_for_known_item(self):
         # ARRANGE: stock was reset to defaults (laptop = 10)
         # ACT
@@ -45,8 +44,8 @@ class TestGetStock:
 
 # ── reduce_stock() ────────────────────────────────────────────────────────────
 
-class TestReduceStock:
 
+class TestReduceStock:
     def test_happy_path_returns_true(self):
         # ARRANGE: laptop stock = 10
         # ACT: reduce by 3
@@ -75,7 +74,7 @@ class TestReduceStock:
     def test_insufficient_stock_does_not_change_count(self):
         # Stock must be UNCHANGED after a failed reduction
         inventory.reduce_stock("laptop", 11)
-        assert inventory.get_stock("laptop") == 10   # still 10
+        assert inventory.get_stock("laptop") == 10  # still 10
 
     def test_unknown_item_returns_false(self):
         # An item with no stock → treat as 0 available → fail
@@ -91,6 +90,6 @@ class TestReduceStock:
             inventory.reduce_stock("laptop", -5)
 
     def test_multiple_reductions_accumulate_correctly(self):
-        inventory.reduce_stock("mouse", 10)   # 50 → 40
-        inventory.reduce_stock("mouse", 15)   # 40 → 25
+        inventory.reduce_stock("mouse", 10)  # 50 → 40
+        inventory.reduce_stock("mouse", 15)  # 40 → 25
         assert inventory.get_stock("mouse") == 25

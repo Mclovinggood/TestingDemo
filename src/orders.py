@@ -38,8 +38,7 @@ def place_order(customer_email: str, item_id: str, quantity: int) -> OrderResult
     available = inventory.get_stock(item_id)
     if available < quantity:
         return OrderResult(
-            False,
-            f"Insufficient stock: requested {quantity}, available {available}"
+            False, f"Insufficient stock: requested {quantity}, available {available}"
         )
 
     ok = inventory.reduce_stock(item_id, quantity)

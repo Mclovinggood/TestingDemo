@@ -15,17 +15,21 @@ import orders
 
 
 class CheckoutResult:
-    def __init__(self, success: bool, message: str, order_ids: list = None, failures: list = None):
+    def __init__(
+        self, success: bool, message: str, order_ids: list = None, failures: list = None
+    ):
         self.success = success
         self.message = message
         self.order_ids = order_ids or []
-        self.failures = failures or []   # items that could not be ordered
+        self.failures = failures or []  # items that could not be ordered
 
     def __repr__(self):
-        return (f"CheckoutResult(success={self.success}, "
-                f"message='{self.message}', "
-                f"order_ids={self.order_ids}, "
-                f"failures={self.failures})")
+        return (
+            f"CheckoutResult(success={self.success}, "
+            f"message='{self.message}', "
+            f"order_ids={self.order_ids}, "
+            f"failures={self.failures})"
+        )
 
 
 def checkout(customer_email: str) -> CheckoutResult:
@@ -60,11 +64,13 @@ def checkout(customer_email: str) -> CheckoutResult:
         if result.success:
             order_ids.append(result.order_id)
         else:
-            failures.append({
-                "item_id": item_id,
-                "quantity": quantity,
-                "reason": result.message,
-            })
+            failures.append(
+                {
+                    "item_id": item_id,
+                    "quantity": quantity,
+                    "reason": result.message,
+                }
+            )
 
     # Clear only the items that succeeded
     if failures:

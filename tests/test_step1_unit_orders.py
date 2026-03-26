@@ -1,4 +1,3 @@
-
 #  STEP 1 — Unit Tests: orders module
 #  We test place_order() IN ISOLATION by replacing (mocking) its
 #  dependencies: inventory and notifications are faked out so we
@@ -8,12 +7,12 @@
 # module with a controlled fake (a "mock") for the duration of
 # one test.  When the test finishes, the real module is restored.
 
-import pytest
 from unittest.mock import patch, MagicMock
 import orders
 
 
 # ── Helper: a factory for a fake inventory.get_stock / reduce_stock ───────────
+
 
 def _mock_inventory(stock_value=10, reduce_returns=True):
     """
@@ -28,8 +27,8 @@ def _mock_inventory(stock_value=10, reduce_returns=True):
 
 # ── Input validation tests ────────────────────────────────────────────────────
 
-class TestPlaceOrderValidation:
 
+class TestPlaceOrderValidation:
     def test_missing_email_returns_failure(self):
         result = orders.place_order("", "laptop", 1)
         assert result.success is False
@@ -49,8 +48,8 @@ class TestPlaceOrderValidation:
 
 # ── Business logic tests (inventory mocked) ───────────────────────────────────
 
-class TestPlaceOrderLogic:
 
+class TestPlaceOrderLogic:
     @patch("orders.inventory")
     @patch("orders.notifications")
     def test_order_succeeds_when_stock_available(self, mock_notif, mock_inv):
@@ -99,7 +98,7 @@ class TestPlaceOrderLogic:
     @patch("orders.inventory")
     @patch("orders.notifications")
     def test_failed_order_does_not_send_notification(self, mock_notif, mock_inv):
-        mock_inv.get_stock.return_value = 0   # nothing in stock
+        mock_inv.get_stock.return_value = 0  # nothing in stock
         orders.place_order("alice@example.com", "laptop", 1)
         mock_notif.send_confirmation.assert_not_called()
 
